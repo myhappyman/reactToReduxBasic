@@ -1,46 +1,78 @@
-# Getting Started with Create React App
+# React Redux Study
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+김민준님의 저자 `리액트를 다루는 기술`을 읽고 학습한 내용을 타입스크립트로 작성하면서 학습을 하는 repository입니다.
 
-## Available Scripts
+# 리덕스를 사용하여 리액트 애플리케이션 상태 관리하기
 
-In the project directory, you can run:
+## Redux
 
-### `npm start`
+recoil과 마찬가지로 전역 상태 관리 라이브러리이다.
+가장 흔하게 사용되는 라이브러리 중 하나로 상태 관리만 따로 분리시켜서 효율적으로 관리 할 수 있다.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+### Action
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+상태에 어떤 변화가 필요하면 액션이라는 것이 발생한다.
+객체의 형태로 표현되어 key, value형태로 이루어져 있다.
+type이라는 key값의 필드를 반드시 가지고 있어야 한다.
 
-### `npm test`
+```js
+{
+  type: 'Increase';
+}
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+어떤 변화가 이루어질때마다 액션 객체를 만들어서 사용해야하는데, 매번 작성하는게 번거롭거나 실수로 놓칠 수도 있기에 함수로 관리하는 편이다.
 
-### `npm run build`
+### Reducer
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+변화를 일으키는 함수다.
+액션을 만들어서 발생시키면 리듀서가 현재 상태와 전달받은 액션 객체를 파라미터로 받아온다.
+두 값을 비교하고 새로운 상태를 반환한다.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```js
+const initialState = {
+  counter: 1,
+};
+function reducer(state = initialState, action) {
+  switch (action) {
+  }
+}
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Store
 
-### `npm run eject`
+프로젝트에 리덕스를 적용하기 위해 store를 만든다.
+한개의 프로젝트에 단 하나의 스토어만 가질 수 있다.
+스토어에는 현재 어플의 상태와 리듀서가 들어가 있고 그 외에 중요한 내장 함수들로 구성되어 있다.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+### Dispatch
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+스토어의 내장 함수 중 하나다.
+액션을 발생 시키는 트리거 역할을 한다.
+`dispatch(action)` 형태로 객체를 파라미터로 넣어서 호출한다.
+이 함수가 동작하고 나면 리듀서 함수를 실행시키고 새로운 상태값을 만든다.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+### subscribe
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+스토어의 내장 함수 중 하나다.
+subscribe는 함수 안에 리스너 함수를 파라미터로 넣어서 호출해 주면, 이 리스너 함수가 액션이 디스패치되어 상태가 업데이트될 때마다 호출된다.
 
-## Learn More
+```js
+const listener = () => {
+  console.log('상태가 업데이트 됨.');
+};
+const unsubscribe = store.subscribe(listener);
+unsubscribe();
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## 리덕스 코드 구성하기
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+리덕스 작성을 위해서는 액션 타입, 액션 생성 함수, 리듀서 코드가 필요하다. 이 코드들을 각각 다른 파일에 작성하는 방법도 있고 기능별로 묶어서 파일 하나에 작성하는 방법도 있다.
+
+일반적으론 actions/constants/reducers 디렉토리로 구분하여 기능별로 각각 구현하지만 종류가 많아지면 3곳에 생성하고 매번 작성하는게 불편하게 느껴질수 있다.
+
+modules라는 디렉토리에 하나의 파일에 액션, 액션 생성 함수, 리듀서를 몰아서 작성하는 `Ducks`라는패턴으로 작성해본다.
+
+## redux-actions
+
+redux를 기본적은 컨테이너를 통해 구성하였는데, 이번엔 `redux-actions`를 사용하여 더 짧고 간결하게 작성한다.
