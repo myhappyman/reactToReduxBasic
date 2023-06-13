@@ -11,8 +11,8 @@ export default function Counter({ number, onIncrease, onDecrease }: ICounter) {
     <div>
       <h1>{number}</h1>
       <div>
-        <button onClick={onIncrease}>+1</button>
-        <button onClick={onDecrease}>-1</button>
+        <button onClick={() => onIncrease(number)}>+1</button>
+        <button onClick={() => onDecrease(number)}>-1</button>
       </div>
     </div>
   );
