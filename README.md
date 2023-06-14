@@ -76,3 +76,29 @@ modules라는 디렉토리에 하나의 파일에 액션, 액션 생성 함수, 
 ## redux-actions
 
 redux를 기본적은 컨테이너를 통해 구성하였는데, 이번엔 `redux-actions`를 사용하여 더 짧고 간결하게 작성한다.
+
+### todos부분에도 redux-actions 적용하기
+
+해당부분에서도 똑같이 `redux-actions`를 적용하려고하는데, 액션 생성 함수가 조금 다른 점이 있다. `createAction`으로 필요한 추가 데이터는 payload라는 이름을 사용한다.
+
+사용 예시
+
+```js
+const MY_ACTION = 'sample/MY_ACTION';
+const myAction = createAction(MY_ACTION);
+const action = myAction('hello world');
+/**
+ * result: {type: MY_ACTION, payload: "hello world"}
+ **/
+```
+
+```js
+const MY_ACTION = 'sample/MY_ACTION';
+const myAction = createAction(MY_ACTION, (text) => `${text}!`);
+const action = myAction('hello world');
+/**
+ * result: {type: MY_ACTION, payload: "hello world!"}
+ **/
+```
+
+`**modules/todos.ts**`에서 hanldeActions쪽 타입스크립트로 타입 정의하는 부분에서 에러가 많이 발생해서 너무 많은 시간을 사용했다. 제대로 처리한건지에 대해서도 의문 추후 제대로 된 지식이 습득되면 수정 예정.

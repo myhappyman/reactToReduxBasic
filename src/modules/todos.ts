@@ -1,3 +1,5 @@
+import { createAction, handleActions, Action } from 'redux-actions';
+
 export interface ITodo {
   id: number;
   text: string;
@@ -9,44 +11,15 @@ export const INSERT = 'todos/INSERT' as const;
 export const TOGGLE = 'todos/TOGGLE' as const;
 export const REMOVE = 'todos/REMOVE' as const;
 
-export interface IChangeInput {
-  (text: string): { type: typeof CHANGE_INPUT; input: string };
-}
-export interface IInsert {
-  (text: string): { type: typeof INSERT; todo: ITodo };
-}
-export interface IToggle {
-  (id: number): { type: typeof TOGGLE; id: number };
-}
-
-export interface IRemove {
-  (id: number): { type: typeof REMOVE; id: number };
-}
-
-export const changeInput = (input: string) => ({
-  type: CHANGE_INPUT,
-  input,
-});
-
+export const changeInput = createAction(CHANGE_INPUT, (input: string) => input);
 let id = 3;
-export const insert = (text: string) => ({
-  type: INSERT,
-  todo: {
-    id: id++,
-    text,
-    done: false,
-  },
-});
-
-export const toggle = (id: number) => ({
-  type: TOGGLE,
-  id,
-});
-
-export const remove = (id: number) => ({
-  type: REMOVE,
-  id,
-});
+export const insert = createAction(INSERT, (text: string) => ({
+  id: id++,
+  text,
+  done: false,
+}));
+export const toggle = createAction(TOGGLE, (id: number) => id);
+export const remove = createAction(REMOVE, (id: number) => id);
 
 const initialState = {
   input: '',
@@ -64,45 +37,35 @@ const initialState = {
   ],
 };
 
-type TodosActionTypes =
-  | typeof CHANGE_INPUT
-  | typeof INSERT
-  | typeof TOGGLE
-  | typeof REMOVE;
+type TodosState = {
+  todos: ITodo[];
+};
 
-interface IAction {
-  type: TodosActionTypes;
-  input: string;
-  todo: ITodo;
-  id: number;
-}
-function todos(state = initialState, action: IAction) {
-  switch (action.type) {
-    case CHANGE_INPUT:
-      return {
-        ...state,
-        input: action.input,
-      };
-    case INSERT:
-      return {
-        ...state,
-        todos: state.todos.concat(action.todo),
-      };
-    case TOGGLE:
-      return {
-        ...state,
-        todos: state.todos.map((todo) =>
-          todo.id === action.id ? { ...todo, done: !todo.done } : todo,
-        ),
-      };
-    case REMOVE:
-      return {
-        ...state,
-        todos: state.todos.filter((todo) => todo.id !== action.id),
-      };
-    default:
-      return state;
-  }
-}
+const todos = handleActions<TodosState, any>(
+  {
+    [CHANGE_INPUT]: (
+      state,
+      { payload: input }: { payload: Action<string> },
+    ) => ({
+      ...state,
+      input: input,
+    }),
+    [INSERT]: (state, { payload: todo }: { payload: ITodo }) => ({
+      ...state,
+      todos: [...state.todos, todo],
+    }),
+    [TOGGLE]: (state, { payload: id }: { payload: number }) => ({
+      ...state,
+      todos: state.todos.map((todo: ITodo) =>
+        todo.id === id ? { ...todo, done: !todo.done } : todo,
+      ),
+    }),
+    [REMOVE]: (state, { payload: id }: { payload: number }) => ({
+      ...state,
+      todos: state.todos.filter((todo: ITodo) => todo.id !== id),
+    }),
+  },
+  initialState,
+);
 
 export default todos;

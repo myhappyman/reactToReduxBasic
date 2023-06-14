@@ -1,24 +1,14 @@
 import { connect } from 'react-redux';
 import Todos from '../components/Todos';
-import {
-  changeInput,
-  insert,
-  toggle,
-  remove,
-  IChangeInput,
-  IInsert,
-  IToggle,
-  IRemove,
-  ITodo,
-} from '../modules/todos';
+import { changeInput, insert, toggle, remove, ITodo } from '../modules/todos';
 
 interface ITodosContainer {
   input: string;
   todos: ITodo[];
-  changeInput: IChangeInput;
-  insert: IInsert;
-  toggle: IToggle;
-  remove: IRemove;
+  changeInput: typeof changeInput;
+  insert: typeof insert;
+  toggle: typeof toggle;
+  remove: typeof remove;
 }
 
 const TodosContainer = ({

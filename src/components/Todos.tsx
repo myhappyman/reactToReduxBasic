@@ -1,24 +1,18 @@
-import {
-  IChangeInput,
-  IInsert,
-  IToggle,
-  IRemove,
-  ITodo,
-} from '../modules/todos';
+import { ITodo, changeInput, insert, remove, toggle } from '../modules/todos';
 
 export interface ITodos {
   input: string;
   todos: ITodo[];
-  onChangeInput: IChangeInput;
-  onInsert: IInsert;
-  onToggle: IToggle;
-  onRemove: IRemove;
+  onChangeInput: typeof changeInput;
+  onInsert: typeof insert;
+  onToggle: typeof toggle;
+  onRemove: typeof remove;
 }
 
 interface ITodoItem {
   todo: ITodo;
-  onToggle: IToggle;
-  onRemove: IRemove;
+  onToggle: typeof toggle;
+  onRemove: typeof remove;
 }
 
 const TodoItem = ({ todo, onToggle, onRemove }: ITodoItem) => {
